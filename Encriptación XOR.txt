@@ -1,0 +1,100 @@
+const bool key[8] = {false, false, false, true, true, false, true, true};
+char comando[2];
+int data; 
+                  //0 0 0 1 1 0 1 1
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  Serial.println ("Terminal Activada.");
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  while(Serial.available()) {
+    int codigoAscii;  // Código ASCII del carácter 'A'
+    data = Serial.readBytesUntil(13, comando, 2);
+    comando[data] = 0;
+    bool binario[8] = {false, false, false, false, false, false, false, false};
+    codigoAscii = (int)comando[0];
+    for(int i = 0; i < 8; i++) {
+      if (codigoAscii % 2 == 0) {
+        binario[i] = false;
+      } else {
+        binario[i] = true;
+      }
+      codigoAscii = codigoAscii / 2;
+    }
+    Serial.print("Caractér sin encriptar: ");
+    Serial.println(comando[0]);
+    // 128 64 32 16 8 4 2 1
+    int decimalEncriptado = 0;
+    
+    if (binario[7] ^ key[0]) {
+      decimalEncriptado+=128;
+    }
+    if (binario[6] ^ key[1]) {
+      decimalEncriptado+=64;
+    }
+    if (binario[5] ^ key[2]) {
+      decimalEncriptado+=32;
+    }
+    if (binario[4] ^ key[3]) {
+      decimalEncriptado+=16;
+    }
+    if (binario[3] ^ key[4]) {
+      decimalEncriptado+=8;
+    }
+    if (binario[2] ^ key[5]) {
+      decimalEncriptado+=4;
+    }
+    if (binario[1] ^ key[6]) {
+      decimalEncriptado+=2;
+    }
+    if (binario[0] ^ key[7]) {
+      decimalEncriptado+=1;
+    }
+    char caracterEncript = (char)decimalEncriptado;
+
+    Serial.print("Caractér encriptado: ");
+    Serial.println(caracterEncript);
+ //------------------------------------------------------------- desencripta
+ 
+    bool binarioEncript[8] = {false, false, false, false, false, false, false, false};
+    for(int i = 0; i < 8; i++) {
+      if (decimalEncriptado % 2 == 0) {
+        binarioEncript[i] = false;
+      } else {
+        binarioEncript[i] = true;
+      }
+      decimalEncriptado = decimalEncriptado / 2;
+    }
+    int decimalDesencriptado = 0;
+    if (binarioEncript[7] ^ key[0]) {
+      decimalDesencriptado+=128;
+    }
+    if (binarioEncript[6] ^ key[1]) {
+      decimalDesencriptado+=64;
+    }
+    if (binarioEncript[5] ^ key[2]) {
+      decimalDesencriptado+=32;
+    }
+    if (binarioEncript[4] ^ key[3]) {
+      decimalDesencriptado+=16;
+    }
+    if (binarioEncript[3] ^ key[4]) {
+      decimalDesencriptado+=8;
+    }
+    if (binarioEncript[2] ^ key[5]) {
+      decimalDesencriptado+=4;
+    }
+    if (binarioEncript[1] ^ key[6]) {
+      decimalDesencriptado+=2;
+    }
+    if (binarioEncript[0] ^ key[7]) {
+      decimalDesencriptado+=1;
+    }
+    char caracterDesencript = (char)decimalDesencriptado;
+    Serial.print("Caractér desencriptado: ");
+    Serial.println(caracterDesencript);
+  }
+}
